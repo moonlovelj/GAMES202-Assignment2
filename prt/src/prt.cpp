@@ -116,7 +116,7 @@ namespace ProjEnv
         std::vector<Eigen::Array3f> SHCoeffiecents(SHNum);
         for (int i = 0; i < SHNum; i++)
             SHCoeffiecents[i] = Eigen::Array3f(0);
-        float sumWeight = 0;
+        float sumWeight = 0.25 * M_1_PI;
         for (int i = 0; i < 6; i++)
         {
             for (int y = 0; y < height; y++)
@@ -129,9 +129,25 @@ namespace ProjEnv
                     int index = (y * width + x) * channel;
                     Eigen::Array3f Le(images[i][index + 0], images[i][index + 1],
                                       images[i][index + 2]);
+					float area = CalcArea(x, y, width, height);
+					SHCoeffiecents[0] += 0.282095 * Le * area;
+					SHCoeffiecents[1] += 0.488603 * dir.x() * Le * area;
+					SHCoeffiecents[2] += 0.488603 * dir.z() * Le * area;
+					SHCoeffiecents[3] += 0.488603 * dir.y() * Le * area;
+					SHCoeffiecents[4] += 1.092548 * dir.x()*dir.z() * Le * area;
+					SHCoeffiecents[5] += 1.092548 * dir.y()*dir.z() * Le * area;
+					SHCoeffiecents[6] += 1.092548 * dir.y()*dir.x() * Le * area;
+					SHCoeffiecents[7] += (0.946176 * dir.z() * dir.z() - 0.315392) * Le * area;
+					SHCoeffiecents[8] += (0.546274 * (dir.x()*dir.x() - dir.y()*dir.y())) * Le * area;
                 }
             }
         }
+
+		for(auto& coe : SHCoeffiecents)
+		{
+			coe *= sumWeight;
+		}
+
         return SHCoeffiecents;
     }
 }
@@ -210,13 +226,14 @@ public:
                 {
                     // TODO: here you need to calculate unshadowed transport term of a given direction
                     // TODO: 此处你需要计算给定方向下的unshadowed传输项球谐函数值
-                    return 0;
+                    return std::max((double)wi.dot(n), 0.0);
                 }
                 else
                 {
                     // TODO: here you need to calculate shadowed transport term of a given direction
                     // TODO: 此处你需要计算给定方向下的shadowed传输项球谐函数值
-                    return 0;
+                    bool shadow = scene->rayIntersect({v+n*1e-3, wi});
+                    return shadow ? 0 : std::max((double)wi.dot(n), 0.0);
                 }
             };
             auto shCoeff = sh::ProjectFunction(SHOrder, shFunc, m_SampleCount);
