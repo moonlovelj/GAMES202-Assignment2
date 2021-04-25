@@ -114,11 +114,11 @@ async function GAMES202Main() {
 	}
 
 	// TODO: load model - Add your Material here
-	let material = buildEnvironmentMaterial(precomputeL, precomputeLT, 
+	let material = buildEnvironmentMaterial(precomputeL, 
 		"./src/shaders/environmentMap/environmentVertex.glsl", "./src/shaders/environmentMap/environmentFragment.glsl");
 
-	loadOBJ(renderer, 'assets/mary/', 'mary', material, boxTransform);
-	//loadOBJ(renderer, 'assets/mary/', 'mary', 'addYourPRTMaterial', box2Transform);
+	loadOBJ(renderer, 'assets/mary/', 'mary', 'EnvironmentMaterial', boxTransform);
+	//loadOBJ(renderer, 'assets/mary/', 'mary', 'EnvironmentMaterial', box2Transform);
 
 	function createGUI() {
 		const gui = new dat.gui.GUI();

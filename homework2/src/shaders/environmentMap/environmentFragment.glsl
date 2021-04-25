@@ -2,14 +2,17 @@
 precision mediump float;
 #endif
 
-uniform vec3 uLightPos;
-uniform vec3 uCameraPos;
+//uniform sampler2D uSampler;
 
-varying highp vec3 vNormal;
+//varying highp vec2 vTextureCoord;
+varying highp vec3 vEnvironmentLight;
 varying highp vec2 vTextureCoord;
+varying highp vec3 vNormal;
+
+#define PI 3.141592653589793
 
 void main(){
-
-  //gl_FragColor = vec4( 1.0, 0.0, 0.0, gl_FragCoord.z);
-  gl_FragColor = pack(gl_FragCoord.z);
+  vec3 color = vec3(1.0);//texture2D(uSampler, vTextureCoord).rgb;
+  gl_FragColor = vec4(vEnvironmentLight*10000.0, 1.0);
+  //gl_FragColor=vec4(1.0,1.0,1.0,1.0);
 }

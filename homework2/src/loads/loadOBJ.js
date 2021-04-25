@@ -58,7 +58,10 @@ function loadOBJ(renderer, path, name, objMaterial, transform) {
 									shadowMaterial = buildShadowMaterial(light, Translation, Scale, "./src/shaders/shadowShader/shadowVertex.glsl", "./src/shaders/shadowShader/shadowFragment.glsl");
 									break;
 								// TODO: Add your PRTmaterial here
-
+								case 'EnvironmentMaterial':
+									material = buildEnvironmentMaterial(precomputeL, 
+										"./src/shaders/environmentMap/environmentVertex.glsl", "./src/shaders/environmentMap/environmentFragment.glsl");
+									break;
 								case 'SkyBoxMaterial':
 									material = buildSkyBoxMaterial("./src/shaders/skyBoxShader/SkyBoxVertex.glsl", "./src/shaders/skyBoxShader/SkyBoxFragment.glsl");
 									break;
