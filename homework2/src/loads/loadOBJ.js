@@ -59,7 +59,7 @@ function loadOBJ(renderer, path, name, objMaterial, transform) {
 									break;
 								// TODO: Add your PRTmaterial here
 								case 'EnvironmentMaterial':
-									material = buildEnvironmentMaterial(precomputeL, 
+									material = buildEnvironmentMaterial(precomputeL[guiParams.envmapId], 
 										"./src/shaders/environmentMap/environmentVertex.glsl", "./src/shaders/environmentMap/environmentFragment.glsl");
 									break;
 								case 'SkyBoxMaterial':

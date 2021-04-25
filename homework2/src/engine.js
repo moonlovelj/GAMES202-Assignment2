@@ -3,9 +3,11 @@ let precomputeL = [];
 var cameraPosition = [50, 0, 100];
 
 var envmap = [
-	'assets/cubemap/GraceCathedral',
 	'assets/cubemap/Indoor',
+	'assets/cubemap/CornellBox',
+	
 	'assets/cubemap/Skybox',
+	'assets/cubemap/GraceCathedral',
 ];
 
 var guiParams = {
@@ -66,7 +68,7 @@ async function GAMES202Main() {
 
 	// Add shapes
 	let skyBoxTransform = setTransform(0, 50, 50, 150, 150, 150);
-	let boxTransform = setTransform(0, 0, 0, 200, 200, 200);
+	let boxTransform = setTransform(0, 0, 0, 40, 40, 40);
 	let box2Transform = setTransform(0, -10, 0, 20, 20, 20);
 
 	for (let i = 0; i < envmap.length; i++) {
@@ -104,18 +106,22 @@ async function GAMES202Main() {
 
 		precomputeL[i] = val.split(/[(\r\n)\r\n]+/);
 		precomputeL[i].pop();
+		var coefficients = [];
 		for (let j = 0; j < 9; j++) {
 			lineArray = precomputeL[i][j].split(' ');
 			for (let k = 0; k < 3; k++) {
 				lineArray[k] = Number(lineArray[k]);
 			}
-			precomputeL[i][j] = lineArray;
+			//console.log(coefficients);
+			coefficients = coefficients.concat(lineArray);
+			//precomputeL[i][j] = lineArray;
 		}
+		precomputeL[i] = coefficients;
 	}
 
 	// TODO: load model - Add your Material here
-	let material = buildEnvironmentMaterial(precomputeL, 
-		"./src/shaders/environmentMap/environmentVertex.glsl", "./src/shaders/environmentMap/environmentFragment.glsl");
+	// let material = buildEnvironmentMaterial(precomputeL[0], 
+	// 	"./src/shaders/environmentMap/environmentVertex.glsl", "./src/shaders/environmentMap/environmentFragment.glsl");
 
 	loadOBJ(renderer, 'assets/mary/', 'mary', 'EnvironmentMaterial', boxTransform);
 	//loadOBJ(renderer, 'assets/mary/', 'mary', 'EnvironmentMaterial', box2Transform);
@@ -123,7 +129,7 @@ async function GAMES202Main() {
 	function createGUI() {
 		const gui = new dat.gui.GUI();
 		const panelModel = gui.addFolder('Switch Environemtn Map');
-		panelModel.add(guiParams, 'envmapId', { 'GraceGathedral': 0, 'Indoor': 1, 'Skybox': 2 }).name('Envmap Name');
+		panelModel.add(guiParams, 'envmapId', {'Indoor': 0, 'CornellBox':1, 'Skybox': 2,'GraceGathedral': 3}).name('Envmap Name');
 		panelModel.open();
 	}
 
