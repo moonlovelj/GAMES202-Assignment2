@@ -11,6 +11,7 @@ class EnvironmentMaterial extends Material {
             // 'uLightMVP': { type: 'matrix4fv', value: lightMVP },
             // prt
             'aPrecomputeL' : { type: 'changeble', value: 'aPrecomputeL'},
+            'uLightScale' : { type : 'changeble', value: 'uLightScale'},
         }, ['aPrecomputeLT'], vertexShader, fragmentShader, null);
 
         this.precomputeL = precomputeL;
@@ -23,6 +24,11 @@ class EnvironmentMaterial extends Material {
                 gl.uniform3fv(
 					shaderProgramUniform,
 					this.precomputeL[guiParams.envmapId]); 
+                break;
+            case 'uLightScale':
+                gl.uniform1f(
+					shaderProgramUniform,
+					exposureControls.exposureScale);
                 break;
         }
     }

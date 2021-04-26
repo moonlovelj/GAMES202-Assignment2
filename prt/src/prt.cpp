@@ -130,15 +130,12 @@ namespace ProjEnv
                     Eigen::Array3f Le(images[i][index + 0], images[i][index + 1],
                                       images[i][index + 2]);
 					float area = CalcArea(x, y, width, height);
-					SHCoeffiecents[0] += 0.282095 * Le * area;
-					SHCoeffiecents[1] += 0.488603 * dir.x() * Le * area;
-					SHCoeffiecents[2] += 0.488603 * dir.z() * Le * area;
-					SHCoeffiecents[3] += 0.488603 * dir.y() * Le * area;
-					SHCoeffiecents[4] += 1.092548 * dir.x()*dir.z() * Le * area;
-					SHCoeffiecents[5] += 1.092548 * dir.y()*dir.z() * Le * area;
-					SHCoeffiecents[6] += 1.092548 * dir.y()*dir.x() * Le * area;
-					SHCoeffiecents[7] += (0.946176 * dir.z() * dir.z() - 0.315392) * Le * area;
-					SHCoeffiecents[8] += (0.546274 * (dir.x()*dir.x() - dir.y()*dir.y())) * Le * area;
+					int shIndex=0;
+					for(int l=0; l<=SHOrder; l++){
+						for(int m=-l; m<=l; m++){
+							SHCoeffiecents[shIndex++] += Le * area * sh::EvalSH(l, m, {dir.x(), dir.y(), dir.z()});;
+						}
+					}
                 }
             }
         }
@@ -292,10 +289,10 @@ public:
         // TODO: you need to delete the following four line codes after finishing your calculation to SH,
         //       we use it to visualize the normals of model for debug.
         // TODO: 在完成了球谐系数计算后，你需要删除下列四行，这四行代码的作用是用来可视化模型法线
-        if (c.isZero()) {
+        /*if (c.isZero()) {
             auto n_ = its.shFrame.n.cwiseAbs();
             return Color3f(n_.x(), n_.y(), n_.z());
-        }
+        }*/
         return c;
     }
 

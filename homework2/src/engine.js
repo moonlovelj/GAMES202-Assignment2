@@ -13,6 +13,11 @@ var guiParams = {
 	envmapId: 0
 }
 
+var exposureControls = {
+    exposureScale: 5
+}
+
+
 var cubeMaps = [];
 
 //生成的纹理的分辨率，纹理必须是标准的尺寸 256*256 1024*1024  2048*2048
@@ -130,6 +135,7 @@ async function GAMES202Main() {
 		const panelModel = gui.addFolder('Switch Environemtn Map');
 		panelModel.add(guiParams, 'envmapId', {'Indoor': 0, 'CornellBox':1, 'Skybox': 2,'GraceGathedral': 3}).name('Envmap Name');
 		panelModel.open();
+		gui.add(exposureControls, 'exposureScale', 0.1, 100);
 	}
 
 	createGUI();
