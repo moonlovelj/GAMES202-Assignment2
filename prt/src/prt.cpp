@@ -239,9 +239,33 @@ public:
                 m_TransportSHCoeffs.col(i).coeffRef(j) = (*shCoeff)[j];
             }
         }
+
         if (m_Type == Type::Interreflection)
         {
             // TODO: leave for bonus
+			std::srand((unsigned int) time(0));
+			Eigen::MatrixXf transportSHCoeffs(m_TransportSHCoeffs);
+			for (int i = 0; i < mesh->getVertexCount(); i++)
+			{
+				Point3f v = mesh->getVertexPositions().col(i);
+				Normal3f n = mesh->getVertexNormals().col(i);
+				std::stack<Intersection> intersectionDI;
+
+				for (int j = 0; j<m_Bounce; ++j) {
+					Vector3f wi = Eigen::Vector3f::Random();
+					wi.normalize();
+					if (wi.dot(n) < 0)
+						wi=-wi;
+					Intersection t;
+					bool intersected = scene->rayIntersect({v+n*1e-3, wi}, t);
+					if (!intersected)
+						break;
+
+					intersectionDI.push(t);
+					v=t.p;
+					n=t.tri_index
+				}
+			}
         }
 
         // Save in face format
