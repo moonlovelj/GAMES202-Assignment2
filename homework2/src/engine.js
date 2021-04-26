@@ -5,7 +5,6 @@ var cameraPosition = [50, 0, 100];
 var envmap = [
 	'assets/cubemap/Indoor',
 	'assets/cubemap/CornellBox',
-	
 	'assets/cubemap/Skybox',
 	'assets/cubemap/GraceCathedral',
 ];

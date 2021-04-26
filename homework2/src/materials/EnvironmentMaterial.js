@@ -1,9 +1,6 @@
 class EnvironmentMaterial extends Material {
 
     constructor(precomputeL, vertexShader, fragmentShader) {
-        // let lightMVP = light.CalcLightMVP(translate, scale);
-        // let lightIntensity = light.mat.GetIntensity();
-
         super({
             // Phong
             //'uSampler': { type: 'texture', value: color },
@@ -13,8 +10,21 @@ class EnvironmentMaterial extends Material {
             // 'uShadowMap': { type: 'texture', value: light.fbo },
             // 'uLightMVP': { type: 'matrix4fv', value: lightMVP },
             // prt
-            'aPrecomputeL' : { type: '3fv', value: precomputeL },
+            'aPrecomputeL' : { type: 'changeble', value: 'aPrecomputeL'},
         }, ['aPrecomputeLT'], vertexShader, fragmentShader, null);
+
+        this.precomputeL = precomputeL;
+    }
+
+    setChangebleUniform(gl, uniformName, shaderProgramUniform) {
+        switch(uniformName)
+        {
+            case 'aPrecomputeL':
+                gl.uniform3fv(
+					shaderProgramUniform,
+					this.precomputeL[guiParams.envmapId]); 
+                break;
+        }
     }
 }
 

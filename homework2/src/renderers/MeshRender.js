@@ -183,6 +183,8 @@ class MeshRender {
 				gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeMaps[guiParams.envmapId].texture);
 				gl.uniform1i(this.shader.program.uniforms[k], textureNum);
 				textureNum += 1;
+			} else if (this.material.uniforms[k].type == 'changeble'){
+				this.material.setChangebleUniform(gl, this.material.uniforms[k].value, this.shader.program.uniforms[k]);
 			}
 		}
 	}
