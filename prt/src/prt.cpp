@@ -240,30 +240,78 @@ public:
             }
         }
 
+        std::cout<<"m_Bounce : "<<m_Bounce <<std::endl;
+
         if (m_Type == Type::Interreflection)
         {
             // TODO: leave for bonus
 			std::srand((unsigned int) time(0));
-			Eigen::MatrixXf transportSHCoeffs(m_TransportSHCoeffs);
+			Eigen::MatrixXf transportInterSHCoeffs(m_TransportSHCoeffs);
 			for (int i = 0; i < mesh->getVertexCount(); i++)
 			{
-				Point3f v = mesh->getVertexPositions().col(i);
-				Normal3f n = mesh->getVertexNormals().col(i);
-				std::stack<Intersection> intersectionDI;
+				for (int l = 0; l<transportInterSHCoeffs.col(i).size(); ++l) {
+					transportInterSHCoeffs.col(i).coeffRef(l) = 0;
+				}
 
-				for (int j = 0; j<m_Bounce; ++j) {
-					Vector3f wi = Eigen::Vector3f::Random();
-					wi.normalize();
-					if (wi.dot(n) < 0)
-						wi=-wi;
-					Intersection t;
-					bool intersected = scene->rayIntersect({v+n*1e-3, wi}, t);
-					if (!intersected)
-						break;
+				for (int sample = 0; sample<m_SampleCount; ++sample) {
 
-					intersectionDI.push(t);
-					v=t.p;
-					n=t.tri_index
+					Point3f v = mesh->getVertexPositions().col(i);
+					Normal3f n = mesh->getVertexNormals().col(i);
+					std::stack<std::array<float, (SHOrder+1)*(SHOrder+1)+1>> interSHCoeffs;
+
+					for (int j = 0; j<m_Bounce; ++j) {
+						Vector3f wi = Eigen::Vector3f::Random();
+						wi.normalize();
+						if (wi.dot(n)<0)
+							wi = -wi;
+						Intersection t;
+						bool intersected = scene->rayIntersect({ v+n*1e-3, wi }, t);
+						if (!intersected)
+							break;
+
+						std::array<float, (SHOrder+1)*(SHOrder+1)+1> tempSHCoeffs;
+						for (int k = 0; k<tempSHCoeffs.size(); ++k) {
+							tempSHCoeffs[k] = m_TransportSHCoeffs.col(t.tri_index.x()).coeffRef(k)*t.bary.x()+
+									m_TransportSHCoeffs.col(t.tri_index.y()).coeffRef(k)*t.bary.y()+
+									m_TransportSHCoeffs.col(t.tri_index.z()).coeffRef(k)*t.bary.z();
+							//tempSHCoeffs[k] *= std::max(n.dot(wi), 0.f);
+						}
+
+						tempSHCoeffs[tempSHCoeffs.size()-1] = std::max(n.dot(wi), 0.f);
+						interSHCoeffs.push(tempSHCoeffs);
+						v = t.p;
+						n = t.shFrame.n;
+					}
+
+					auto shCoeffs = transportInterSHCoeffs.col(i);
+					std::array<float, (SHOrder+1)*(SHOrder+1)> sumInterSH;
+					for (auto& sumInter: sumInterSH) {
+						sumInter = 0.f;
+					}
+					while (!interSHCoeffs.empty()) {
+						auto sh = interSHCoeffs.top();
+						auto cosTheta = sh[sh.size()-1];
+						interSHCoeffs.pop();
+						for (int j = 0; j<sumInterSH.size(); ++j) {
+							sumInterSH[j] = (sh[j]+sumInterSH[j]*M_1_PI)*cosTheta;
+						}
+					}
+					for (int l = 0; l<shCoeffs.size(); ++l) {
+						transportInterSHCoeffs.col(i).coeffRef(l) += sumInterSH[l];
+					}
+				}
+
+				for (int l = 0; l<transportInterSHCoeffs.col(i).size(); ++l) {
+					transportInterSHCoeffs.col(i).coeffRef(l) /=m_SampleCount;
+				}
+			}
+
+			for (int i = 0; i < mesh->getVertexCount(); i++)
+			{
+				auto shCoeff = m_TransportSHCoeffs.col(i);
+				for (int j = 0; j<shCoeff.size(); ++j)
+				{
+					m_TransportSHCoeffs.col(i).coeffRef(j)+=transportInterSHCoeffs.col(i).coeffRef(j)*M_1_PI;
 				}
 			}
         }
