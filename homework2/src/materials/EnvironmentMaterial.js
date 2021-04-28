@@ -20,11 +20,11 @@ class EnvironmentMaterial extends Material {
     setChangebleUniform(gl, uniformName, shaderProgramUniform) {
         switch(uniformName)
         {
-            case 'aPrecomputeL':
-                gl.uniform3fv(
-					shaderProgramUniform,
-					this.precomputeL[guiParams.envmapId]); 
-                break;
+            // case 'aPrecomputeL':
+            //     gl.uniform3fv(
+			// 		shaderProgramUniform,
+			// 		this.precomputeL[guiParams.envmapId]); 
+            //     break;
             case 'uLightScale':
                 gl.uniform1f(
 					shaderProgramUniform,
