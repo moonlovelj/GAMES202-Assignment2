@@ -67,7 +67,7 @@ function computeSquareMatrix_3by3(rotationMatrix){ // 计算方阵SA(-1) 3*3
 	let A_inverse = math.inv(A);
 
 	// 3、用 R 旋转 ni - {R(ni)}
-	let R = mat4Matrix2mathMatrix(rotationMatrix);
+	let R = math.transpose(mat4Matrix2mathMatrix(rotationMatrix));
 	let R_n1 = math.multiply(R, n1);
 	let R_n2 = math.multiply(R, n2);
 	let R_n3 = math.multiply(R, n3);
@@ -84,7 +84,7 @@ function computeSquareMatrix_3by3(rotationMatrix){ // 计算方阵SA(-1) 3*3
 	];
 
 	// 5、S*A_inverse
-	return math.multiply(S, A_inverse);
+	return math.multiply(math.transpose(S), A_inverse);
 }
 
 function computeSquareMatrix_5by5(rotationMatrix){ // 计算方阵SA(-1) 5*5
@@ -110,7 +110,7 @@ function computeSquareMatrix_5by5(rotationMatrix){ // 计算方阵SA(-1) 5*5
 	let A_inverse = math.inv(A);
 
 	// 3、用 R 旋转 ni - {R(ni)}
-	let R = mat4Matrix2mathMatrix(rotationMatrix);
+	let R = math.transpose(mat4Matrix2mathMatrix(rotationMatrix));
 	let R_n1 = math.multiply(R, n1);
 	let R_n2 = math.multiply(R, n2);
 	let R_n3 = math.multiply(R, n3);
@@ -132,7 +132,7 @@ function computeSquareMatrix_5by5(rotationMatrix){ // 计算方阵SA(-1) 5*5
 	];
 
 	// 5、S*A_inverse
-	return math.multiply(S, A_inverse);
+	return math.multiply(math.transpose(S), A_inverse);
 }
 
 function mat4Matrix2mathMatrix(rotationMatrix){
